@@ -26,6 +26,12 @@ ex2 <- cbind(inoculum[1:10],
              tail(sort(Barcode_Frequencies$...12), n = 10),
              deparse.level = 0)
 
+av <- cbind(sample(inoculum, size = 10, replace = FALSE),
+            tail(rowMeans(cbind(sort(Barcode_Frequencies$...3), sort(Barcode_Frequencies$...4), sort(Barcode_Frequencies$...5))), n = 10),
+            tail(rowMeans(cbind(sort(Barcode_Frequencies$...6), sort(Barcode_Frequencies$...7), sort(Barcode_Frequencies$...8), sort(Barcode_Frequencies$...9))), n = 10),
+            tail(rowMeans(cbind(sort(Barcode_Frequencies$...10), sort(Barcode_Frequencies$...11), sort(Barcode_Frequencies$...12), sort(Barcode_Frequencies$...12))), n = 10),
+            deparse.level = 0)
+
 # Apply average colonisation at each time point
 Colonization_Levels <- read_excel("Colonization Levels.xlsx")
 
@@ -36,6 +42,7 @@ colonisation <- c(mean(Colonization_Levels$`2 hours`, na.rm = TRUE),
 
 abundance_ex1 <- sweep(ex1, 2, colonisation, `*`) / 100
 abundance_ex2 <- sweep(ex2, 2, colonisation, `*`) / 100
+abundance_av <- sweep(av, 2, colonisation, `*`) / 100
 
 m_plot <- function(abundance, method = "ggmuller") {
   adjacency_df <- data.frame(Parent=1, Identity=seq(2, 21))
@@ -76,8 +83,10 @@ m_plot <- function(abundance, method = "ggmuller") {
     clones <- wide_df$clones
     parents <- wide_df$parents
     size_df <- wide_df$wide_size_df
-    #rgb_clone_colors <- sapply(seq(1, length(clones)), function(x){paste(sample(0:255,size=3,replace=TRUE),collapse=",")})
-    freq_frame <- get_evofreq(size_df, clones, parents, clone_cmap = "inferno")
+    rgb_clone_colors <- c("220,20,60", sapply(seq(1, length(clones) - 2), function(x){paste(rep(x * (230 %/% 9) + 20, 3),collapse=",")}),
+                          "0, 0, 0")
+    #freq_frame <- get_evofreq(size_df, clones, parents, clone_cmap = "inferno")
+    freq_frame <- get_evofreq(size_df, clones, parents, rgb_clone_colors)
     p <- plot_evofreq(freq_frame)
     p <- p + xlab("Time (days)") + ylab("Population (CFUs)")
   }
