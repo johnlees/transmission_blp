@@ -45,7 +45,7 @@ abundance_ex2 <- sweep(ex2, 2, colonisation, `*`) / 100
 abundance_av <- sweep(av, 2, colonisation, `*`) / 100
 
 m_plot <- function(abundance, method = "ggmuller") {
-  adjacency_df <- data.frame(Parent=1, Identity=seq(2, 21))
+  adjacency_df <- data.frame(Parent=1, Identity=seq(2, 11))
   populations_df <- reshape2::melt(abundance)
   populations_df$Var2[populations_df$Var2 == 1] <- 0
   populations_df$Var2[populations_df$Var2 == 2] <- 1
@@ -83,12 +83,16 @@ m_plot <- function(abundance, method = "ggmuller") {
     clones <- wide_df$clones
     parents <- wide_df$parents
     size_df <- wide_df$wide_size_df
-    rgb_clone_colors <- c("220,20,60", sapply(seq(1, length(clones) - 2), function(x){paste(rep(x * (230 %/% 9) + 20, 3),collapse=",")}),
+    rgb_clone_colors <- c("86,180,233",
+                          sapply(seq(1, length(clones) - 3), function(x){paste(rep(x * (230 %/% 10) + 20, 3),collapse=",")}),
+                          "0,158,115",
                           "0, 0, 0")
     #freq_frame <- get_evofreq(size_df, clones, parents, clone_cmap = "inferno")
     freq_frame <- get_evofreq(size_df, clones, parents, rgb_clone_colors)
     p <- plot_evofreq(freq_frame)
-    p <- p + xlab("Time (days)") + ylab("Population (CFUs)")
+    p <- p + theme(axis.title = element_text(family = "Arial", size = 12),
+                     axis.text = element_text(family = "Arial", size = 11)) +
+         xlab("Time (days)") + ylab("Population (CFUs)")
   }
   p
 }
@@ -100,7 +104,6 @@ p2 <- m_plot(abundance_ex2)
 p1 <- m_plot(abundance_ex1, method = "evofreq")
 p2 <- m_plot(abundance_ex2, method = "evofreq")
 
-pdf("fig2.pdf", width = 12, height = 6)
-plot_grid(p1, p2, labels = c('A', 'B'), ncol = 2, align = "v", label_size = 12)
-dev.off()
+ggsave(p2, filename = "muller_average.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 

@@ -78,21 +78,27 @@ p1 <- ggplot(df) +
   geom_point(aes(x = Ne, y = mean_h1), stroke=1, shape=1) +
   geom_errorbar(aes(x = Ne, ymin = lower_h1, ymax = upper_h1)) +
   theme_bw() +
+  theme(axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
   scale_x_discrete(limits = c("WT", "67", "133", "266", "532", "1064")) +
   xlab("Effective population size (Ne)") +
   ylab("Hills N1")
+
+ggsave(p1, filename = "fig2b1.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 
 p2 <- ggplot(df) +
   geom_point(aes(x = Ne, y = mean_maxa), stroke=1, shape=1) +
   geom_errorbar(aes(x = Ne, ymin = lower_maxa, ymax = upper_maxa)) +
   theme_bw() +
+  theme(axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
   scale_x_discrete(limits = c("WT", "67", "133", "266", "532", "1064")) +
   xlab("Effective population size (Ne)") +
   ylab("Abundance of most dominant clone")
 
-pdf("fig2b.pdf", width = 12, height = 6)
-plot_grid(p1, p2, labels = c('A', 'B'), ncol = 2, label_size = 12)
-dev.off()
+ggsave(p2, filename = "fig2b2.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 
 # ABC
 n <- 20
@@ -138,7 +144,7 @@ df <- data.frame(
               upper_maxa = NA)
 
 
-for (Ne in c(67, 133, 266, 532, 1064, 10000, 100000)) {
+for (Ne in c(67, 133, 266, 532, 1064, 10000)) {
   df <- rbind(df, run_sim(inoculum, Ne, n_generations, n_repeats))
 }
 
@@ -146,24 +152,69 @@ p3 <- ggplot(df) +
   geom_point(aes(x = Ne, y = mean_h1), stroke=1, shape=1) +
   geom_errorbar(aes(x = Ne, ymin = lower_h1, ymax = upper_h1)) +
   theme_bw() +
-  scale_x_discrete(limits = c("blpC", "67", "133", "266", "532", "1064", "10000", "1e+05"),
-                   labels = c("blpC" = "\u0394blpC", "1e+05" = "100000")) +
+  theme(axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
+  scale_x_discrete(limits = c("blpC", "67", "133", "266", "532", "1064", "10000"),
+                   labels = c("blpC" = "\u0394blpC")) +
   xlab("Effective population size (Ne)") +
   ylab("Hills N1")
+
+ggsave(p3, filename = "fig4h1.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 
 p4 <- ggplot(df) +
   geom_point(aes(x = Ne, y = mean_maxa), stroke=1, shape=1) +
   geom_errorbar(aes(x = Ne, ymin = lower_maxa, ymax = upper_maxa)) +
   theme_bw() +
-  scale_x_discrete(limits = c("blpC", "67", "133", "266", "532", "1064", "10000", "1e+05"),
-                   labels = c("blpC" = "\u0394blpC", "1e+05" = "100000")) +
+  theme(axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
+  scale_x_discrete(limits = c("blpC", "67", "133", "266", "532", "1064", "10000"),
+                   labels = c("blpC" = "\u0394blpC")) +
   xlab("Effective population size (Ne)") +
   ylab("Abundance of most dominant clone")
 
-png("fig4h.png", width = 600, height = 300)
-#pdf("fig4h.pdf", width = 12, height = 6)
-plot_grid(p3, p4, labels = c('H', 'G'), ncol = 2, label_size = 12)
-dev.off()
+ggsave(p4, filename = "fig4h2.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
+
+# Combined plot
+df <- rbind(df, 
+            data.frame(
+              Ne = "WT",
+              mean_h1 = wt_h1,
+              lower_h1 = NA,
+              upper_h1 = NA,
+              mean_maxa = wt_max,
+              lower_maxa = NA,
+              upper_maxa = NA
+            ))
+
+p5 <- ggplot(df) +
+  geom_point(aes(x = Ne, y = mean_h1), stroke=1, shape=1) +
+  geom_errorbar(aes(x = Ne, ymin = lower_h1, ymax = upper_h1)) +
+  theme_bw() +
+  theme(axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
+  scale_x_discrete(limits = c("WT", "blpC", "67", "133", "266", "532", "1064", "10000"),
+                   labels = c("blpC" = "\u0394blpC")) +
+  xlab("Effective population size (Ne)") +
+  ylab("Hills N1")
+
+ggsave(p5, filename = "combined2_4_H1.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
+
+p6 <- ggplot(df) +
+  geom_point(aes(x = Ne, y = mean_maxa), stroke=1, shape=1) +
+  geom_errorbar(aes(x = Ne, ymin = lower_maxa, ymax = upper_maxa)) +
+  theme_bw() +
+  theme(axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
+  scale_x_discrete(limits = c("WT", "blpC", "67", "133", "266", "532", "1064", "10000"),
+                   labels = c("blpC" = "\u0394blpC")) +
+  xlab("Effective population size (Ne)") +
+  ylab("Abundance of most dominant clone")
+
+ggsave(p6, filename = "combined2_4_abun.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 
 n <- 20
 tolerance <- c(1.25,0.75)

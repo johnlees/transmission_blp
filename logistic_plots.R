@@ -24,9 +24,11 @@ p1 <- ggplot(HillsN1, aes(x=Time, y=HillsN1)) +
   geom_smooth(method = "glm", 
               method.args = list(family = "poisson"), 
               se = FALSE) +
-  geom_jitter(width = 0.2, stroke=1, shape=1) +
+  geom_jitter(width = 0.2, stroke=1, shape=16) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle=90)) +
+  theme(axis.text.x = element_text(angle=90),
+        axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
   scale_x_continuous(name="Time", 
                      breaks=c(0, 2, 6, 24, 24*2*7, 24*4*7, 24*6*7),
                      minor_breaks = NULL,
@@ -37,6 +39,9 @@ p1 <- ggplot(HillsN1, aes(x=Time, y=HillsN1)) +
   scale_y_continuous(name="Hills N1", 
                      limits=c(0.1, 1200),
                      trans="sqrt")
+
+ggsave(p1, filename = "fig1F.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 
 summary(glm(HillsN1 ~ Time, HillsN1, family = "poisson"))
 
@@ -60,9 +65,11 @@ p2 <- ggplot(UniqueClonesNumber, aes(x=Time, y=Unique)) +
   geom_smooth(method = "glm", 
               method.args = list(family = "quasipoisson"), 
               se = FALSE) +
-  geom_jitter(width = 0.4, stroke=1, shape=1) +
+  geom_jitter(width = 0.4, stroke=1, shape=16) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle=90)) +
+  theme(axis.text.x = element_text(angle=90),
+        axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
   scale_x_continuous(name="Time", 
                      breaks=c(0, 2, 6, 24, 24*2*7, 24*4*7, 24*6*7),
                      minor_breaks = NULL,
@@ -73,6 +80,9 @@ p2 <- ggplot(UniqueClonesNumber, aes(x=Time, y=Unique)) +
   scale_y_continuous(name="Number of Unique Clones", 
                      limits=c(0.1, 1750),
                      trans="sqrt")
+
+ggsave(p2, filename = "fig1D.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
 
 summary(glm(Unique ~ Time, UniqueClonesNumber, family = "quasipoisson"))
 
@@ -97,9 +107,11 @@ p3 <- ggplot(PercAbun, aes(x=Time, y=Abundance)) +
   geom_smooth(method = "glm", 
               method.args = list(family = "quasibinomial"), 
               se = FALSE) +
-  geom_jitter(width = 0.2, stroke=1, shape=1) +
+  geom_jitter(width = 0.2, stroke=1, shape=16) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle=90)) +
+  theme(axis.text.x = element_text(angle=90),
+        axis.title = element_text(family = "Arial", size = 12),
+        axis.text = element_text(family = "Arial", size = 11)) +
   scale_x_continuous(name="Time", 
                      breaks=c(0, 2, 6, 24, 24*2*7, 24*4*7, 24*6*7),
                      minor_breaks = NULL,
@@ -107,9 +119,14 @@ p3 <- ggplot(PercAbun, aes(x=Time, y=Abundance)) +
                      limits=c(-1, 24*6*7*1.05),
                      expand=expansion(),
                      trans="sqrt") +
-  scale_y_continuous(name="Abundance of most dominant clone", 
+  scale_y_continuous(name="Proportion of the Most Abundant Clone", 
                      limits=c(0, 1),
+                     labels=scales::percent,
                      trans="sqrt")
+
+ggsave(p3, filename = "fig1E.pdf", device = cairo_pdf, 
+       width = 6, height = 6, units = "in")
+
 
 summary(glm(Abundance ~ Time, PercAbun, family = "quasibinomial"))
 
